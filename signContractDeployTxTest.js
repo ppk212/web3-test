@@ -17,8 +17,9 @@ function main() {
         // 4. Disconnect web3 network
         blockchain.disConnectGanache(web3);
 
-        // 5. Create tx which transfer eth
-        blockchain.createTxForTransferEth(web3, txCount).then(txObject => {
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // 5. Create tx which depoying contract named Storage ---- TODO
+        blockchain.createTxForDeployContract(web3, txCount).then(txObject => {
             // 6. Connect web3 network
             blockchain.connectGanache(web3);
             // 7. Sign tx
@@ -30,15 +31,12 @@ function main() {
                     blockchain.getTransactionReceipt(web3, txHash).then(receipt => {
                         console.log(receipt);
     
-                        // 10. Get balance for sender and receiver
-                        blockchain.getBalance(web3, web3.eth.accounts.wallet[0]).then(balance => {
-                            console.log("Account[0].address : ", web3.eth.accounts.wallet[0].address);
-                            console.log("Account[0] : ", balance);
-                        });
-                        blockchain.getBalance(web3, web3.eth.accounts.wallet[1]).then(balance => {
-                            console.log("Account[1].address : ", web3.eth.accounts.wallet[1].address);
-                            console.log("Account[1] : ", balance);
-                        });
+                        // 10. Create object of contract
+
+                        // 11. create tx for call function which save data in contract
+
+                        // 12. call function which get data in contract
+                        
                     });
                 });
             });

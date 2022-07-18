@@ -10,7 +10,21 @@ const blockchain = {
     getNonce: async function(web3, account) {
         return await web3.eth.getTransactionCount(account.address);
     },
-    signTx: async function(web3, txCount) {
+    createTxForDeployContract: async function(web3, txCount) {
+        const receiver = web3.eth.accounts.wallet[1];
+            
+        // Create tx for deploying contract
+        const txObject = {
+            nonce: web3.utils.toHex(txCount),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+            gasLimit: web3.utils.toHex(1000000),
+            // to: receiver.address,
+            // value: web3.utils.toHex(web3.utils.toWei('1', "ether"))
+        };
+        
+        return txObject;
+    },
+    createTxForTransferEth: async function(web3, txCount) {
         const receiver = web3.eth.accounts.wallet[1];
     
         // Create tx for sending 1 ETH to account[1]
@@ -33,7 +47,7 @@ const blockchain = {
     getBalance: async function(web3, account) {
         return web3.eth.getBalance(account.address);
     },
-    sendSignedTx: async function(web3, txObject) {
+    signTx: async function(web3, txObject) {
         const networkId = await web3.eth.net.getId();
         const chainId = await web3.eth.getChainId();
         
@@ -58,15 +72,17 @@ const blockchain = {
     
         const serializedTx = tx.serialize();
     
-        const raw = '0x' + serializedTx.toString("hex");
-    
+        return '0x' + serializedTx.toString("hex");
+    },
+    sendSignedTx: async function(web3, raw) {
         const txResult = await web3.eth.sendSignedTransaction(raw);
     
         return txResult;
     },
     getTransactionReceipt: async function(web3, txHash) {
         return await web3.eth.getTransactionReceipt(txHash);
-    }
+    },
+    
 }
 
 export default blockchain;

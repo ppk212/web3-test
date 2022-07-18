@@ -36,12 +36,13 @@ node signEthTransferTxTest.js
 
 ### 1. signEthTransferTxTest.js - Sign tx for tranffering eth
 1. Add account for Tx
-2. Web3 network connect
+2. Connect web3 network
 3. Get nonce for tx on-line
-4. Web3 network disconnection
-5. Tx which transfer eth create and sign
-6. Web3 network connect
-7. Send signed tx
-8. Get receipt for tx
-9. Get balance for sender and receiver
+4. Disconnect web3 network
+5. Create tx which transfer eth
+6. Connect web3 network
+7. Sign tx
+8. Send tx signed
+9. Get receipt for tx
+10. Get balance for sender and receiver
 
