@@ -25,7 +25,23 @@ ganache-cli --account="0x5eadbceddd2445e35d3f9bbe5dcbec3c414c7d95d1822f017c11e5f
 
 ## Execute test code for sign
 
+### Sign tx for tranfering eth
 ```
-node sign-test.js
+node signEthTransferTxTest.js
 ```
+
+
+
+# Scenarios
+
+### 1. signEthTransferTxTest.js - Sign tx for tranffering eth
+1. Add account for Tx
+2. Web3 network connect
+3. Get nonce for tx on-line
+4. Web3 network disconnection
+5. Tx which transfer eth create and sign
+6. Web3 network connect
+7. Send signed tx
+8. Get receipt for tx
+9. Get balance for sender and receiver
 

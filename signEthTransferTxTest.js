@@ -7,24 +7,24 @@ function main() {
 
     // 1. Add account for Tx
     blockchain.addAccount(web3);
-    // 2. Web3 network connect
+    // 2. Connect web3 network
     blockchain.connectGanache(web3);
 
     // 3. Get nonce for tx on-line
     blockchain.getNonce(web3, web3.eth.accounts.wallet[0]).then(txCount => {
         console.log("Nonce : ", txCount);
 
-        // 4. Web3 network disconnection
+        // 4. Disconnect web3 network
         blockchain.disConnectGanache(web3);
 
-        // 5. Tx create and sign
+        // 5. Create tx which transfer eth and sign it
         blockchain.signTx(web3, txCount).then(txObject => {
-            // 6. Web3 network connect
+            // 6. Connect web3 network
             blockchain.connectGanache(web3);
             // 7. Send signed tx
             blockchain.sendSignedTx(web3, txObject).then(txResult => {
                 const txHash = txResult.transactionHash;
-                // 8. Get tx receipt
+                // 8. Get receipt for tx
                 blockchain.getTransactionReceipt(web3, txHash).then(receipt => {
                     console.log(receipt);
 
