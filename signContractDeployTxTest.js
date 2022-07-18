@@ -20,10 +20,10 @@ function main() {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 5. Create tx which depoying contract named Storage ---- TODO
         blockchain.createTxForDeployContract(web3, txCount).then(txObject => {
-            // 6. Connect web3 network
-            blockchain.connectGanache(web3);
-            // 7. Sign tx
+            // 6. Sign tx
             blockchain.signTx(web3, txObject).then(raw => {
+                // 7. Connect web3 network
+                blockchain.connectGanache(web3);
                 // 8. Send tx signed
                 blockchain.sendSignedTx(web3, raw).then(txResult => {
                     const txHash = txResult.transactionHash;

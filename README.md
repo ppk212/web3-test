@@ -40,8 +40,8 @@ node signEthTransferTxTest.js
 3. Get nonce for tx on-line
 4. Disconnect web3 network
 5. Create tx which transfer eth
-6. Connect web3 network
-7. Sign tx
+6. Sign tx
+7. Connect web3 network
 8. Send tx signed
 9. Get receipt for tx
 10. Get balance for sender and receiver
