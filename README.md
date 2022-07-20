@@ -27,22 +27,32 @@ ganache-cli --account="0x5eadbceddd2445e35d3f9bbe5dcbec3c414c7d95d1822f017c11e5f
 
 ### Sign tx for tranfering eth
 ```
-node signEthTransferTxTest.js
+node 1_CreateTxOnline.js
+node 2_SignTxOffline.js
+node 3_SendTxOnline.js
 ```
 
 
 
 # Scenarios
 
-### 1. signEthTransferTxTest.js - Sign tx for tranffering eth
+### 1. Create Tx Online - 1_CreateTxOnline.js
 1. Add account for Tx
 2. Connect web3 network
-3. Get nonce for tx on-line
-4. Disconnect web3 network
-5. Create tx which transfer eth
-6. Sign tx
-7. Connect web3 network
-8. Send tx signed
-9. Get receipt for tx
-10. Get balance for sender and receiver
+3. Create tx which transfer eth
+4. Write hash of tx in .txt file - File Path : './result/1_result.txt'
+5. Write network info in network json (Option) - File Path : './result/networkInfo.json'
 
+### 2. Sign Tx Offline - 2_SignTxOffline.js
+1. Add account for Tx
+2. Get tx hash(rlp) in file - File Path : './result/1_result.txt'
+3. Get network info in file (Option) - File Path : './result/networkInfo.json'
+4. Sign tx which transfer eth
+5. Write tx hash in file - File Path : './result/2_serialized_tx.txt'
+
+### 3. Send Tx Online - 3_SendTxOnline.js
+1. Add account for Tx
+2. Connect web3 network
+3. Get tx's hash signed in file - File Path : './result/2_serialized_tx.txt'
+4. Send signed tx which transfer eth
+5. Write tx hash finalized in file - File Path : './result/3_send_tx.txt'

@@ -1,6 +1,7 @@
 import { Transaction } from "ethereumjs-tx";
 import Common from "ethereumjs-common";
 import Web3 from "web3";
+import TxDecoder from "ethereum-tx-decoder";
 
 const blockchain = {
     addAccount: function(web3) {
@@ -10,33 +11,85 @@ const blockchain = {
     getNonce: async function(web3, account) {
         return await web3.eth.getTransactionCount(account.address);
     },
-    createTxForDeployContract: async function(web3, txCount) {
-        const receiver = web3.eth.accounts.wallet[1];
+    createTxForDeployContract: async function(web3, txCount, bytecode) {
             
         // Create tx for deploying contract
         const txObject = {
             nonce: web3.utils.toHex(txCount),
             gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
             gasLimit: web3.utils.toHex(1000000),
-            // to: receiver.address,
-            // value: web3.utils.toHex(web3.utils.toWei('1', "ether"))
+            input: bytecode,
+            value: '0x00'
         };
         
         return txObject;
     },
-    createTxForTransferEth: async function(web3, txCount) {
+    createTxForTransferEth: async function(web3) {
+        const sender = web3.eth.accounts.wallet[0];
         const receiver = web3.eth.accounts.wallet[1];
-    
+        
+        const txCount = await web3.eth.getTransactionCount(sender.address);
+        console.log('Nonce : ', txCount);
+
         // Create tx for sending 1 ETH to account[1]
         const txObject = {
             nonce: web3.utils.toHex(txCount),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
             gasLimit: web3.utils.toHex(1000000),
+            gasPrice: web3.utils.toHex(web3.utils.toWei("10", "gwei")),
             to: receiver.address,
             value: web3.utils.toHex(web3.utils.toWei('1', "ether"))
         };
+
+        console.log('txObject : ', txObject);
+
+        const networkId = await web3.eth.net.getId();
+        const chainId = await web3.eth.getChainId();
         
-        return txObject;
+        const customCommon = Common.default.forCustomChain(
+            'mainnet',
+            {
+                name: 'my-private-blockchain',
+                networkId: networkId,
+                chainId: chainId,
+            },
+            'istanbul',
+        );
+        
+        const tx = new Transaction(txObject, { common:customCommon });
+        const hash = '0x' + tx.serialize().toString('hex');
+        
+        const decodedTx = TxDecoder.decodeTx(hash);
+        console.log('decodedTx : ', decodedTx);
+
+        ///// TEST
+        // console.log('--------TEST--------')
+        // const privateKey = Buffer.from(
+        //     web3.eth.accounts.wallet[0].privateKey.substring(2),
+        //     'hex'
+        // );
+        // console.log('privateKey : ', privateKey);
+    
+        // tx.sign(privateKey);
+        
+        // const serializedTx = tx.serialize();
+        
+        // const raw = '0x' + serializedTx.toString("hex");
+        // console.log('raw : ', raw);
+
+        // const txResult = await web3.eth.sendSignedTransaction(raw);
+    
+        // console.log('txResult : ', txResult);
+
+
+        ////////////////////////////////////////////////////
+        
+        return hash;
+    },
+    getNetworkInfo: async function(web3) {
+        return {
+            networkId : await web3.eth.net.getId(),
+            chainId : await web3.eth.getChainId()
+        };
     },
     connectGanache: function(web3) {
         web3.setProvider(new Web3.providers.HttpProvider('http://127.0.0.1:8545'));
@@ -47,26 +100,36 @@ const blockchain = {
     getBalance: async function(web3, account) {
         return web3.eth.getBalance(account.address);
     },
-    signTx: async function(web3, txObject) {
-        const networkId = await web3.eth.net.getId();
-        const chainId = await web3.eth.getChainId();
+    signTx: function(web3, hash, networkInfo) {
         
-        const privateKey = Buffer.from(
-            web3.eth.accounts.wallet[0].privateKey.substring(2),
-            'hex'
-        );
-    
         const customCommon = Common.default.forCustomChain(
             'mainnet',
             {
                 name: 'my-private-blockchain',
-                networkId: networkId,
-                chainId: chainId,
+                networkId: networkInfo.networkId,
+                chainId: networkInfo.chainId,
             },
             'istanbul',
         );
-    
-        const tx = new Transaction(txObject, {common:customCommon});
+
+        const decodedTx = TxDecoder.decodeTx(hash);
+
+        const txObject = {
+            nonce: web3.utils.toHex(decodedTx.nonce),
+            gasLimit: web3.utils.toHex(decodedTx.gasLimit),
+            gasPrice: web3.utils.toHex(decodedTx.gasPrice),
+            to: decodedTx.to,
+            value: web3.utils.toHex(decodedTx.value)
+        };
+
+        console.log('txObject : ', txObject);
+
+        const tx = new Transaction(txObject, { common:customCommon });
+
+        const privateKey = Buffer.from(
+            web3.eth.accounts.wallet[0].privateKey.substring(2),
+            'hex'
+        );
     
         tx.sign(privateKey);
     
