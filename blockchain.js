@@ -2,6 +2,14 @@ import { Transaction } from "ethereumjs-tx";
 import Common from "ethereumjs-common";
 import Web3 from "web3";
 import TxDecoder from "ethereum-tx-decoder";
+import Log from "console-log-level";
+
+const log = Log({
+    prefix: function(level) {
+        return `[${level}]`
+    },
+    level: 'trace'
+});
 
 const blockchain = {
     addAccount: function(web3) {
@@ -29,8 +37,8 @@ const blockchain = {
         const receiver = web3.eth.accounts.wallet[1];
         
         const txCount = await web3.eth.getTransactionCount(sender.address);
-        console.log('Nonce : ', txCount);
-
+        log.trace('1. Nonce : ', txCount);
+        
         // Create tx for sending 1 ETH to account[1]
         const txObject = {
             nonce: web3.utils.toHex(txCount),
@@ -40,7 +48,7 @@ const blockchain = {
             value: web3.utils.toHex(web3.utils.toWei('1', "ether"))
         };
 
-        console.log('txObject : ', txObject);
+        log.trace('2. txObject : ', txObject);
 
         const networkId = await web3.eth.net.getId();
         const chainId = await web3.eth.getChainId();
@@ -57,31 +65,6 @@ const blockchain = {
         
         const tx = new Transaction(txObject, { common:customCommon });
         const hash = '0x' + tx.serialize().toString('hex');
-        
-        const decodedTx = TxDecoder.decodeTx(hash);
-        console.log('decodedTx : ', decodedTx);
-
-        ///// TEST
-        // console.log('--------TEST--------')
-        // const privateKey = Buffer.from(
-        //     web3.eth.accounts.wallet[0].privateKey.substring(2),
-        //     'hex'
-        // );
-        // console.log('privateKey : ', privateKey);
-    
-        // tx.sign(privateKey);
-        
-        // const serializedTx = tx.serialize();
-        
-        // const raw = '0x' + serializedTx.toString("hex");
-        // console.log('raw : ', raw);
-
-        // const txResult = await web3.eth.sendSignedTransaction(raw);
-    
-        // console.log('txResult : ', txResult);
-
-
-        ////////////////////////////////////////////////////
         
         return hash;
     },
@@ -113,7 +96,7 @@ const blockchain = {
         );
 
         const decodedTx = TxDecoder.decodeTx(hash);
-
+        
         const txObject = {
             nonce: web3.utils.toHex(decodedTx.nonce),
             gasLimit: web3.utils.toHex(decodedTx.gasLimit),
@@ -121,13 +104,16 @@ const blockchain = {
             to: decodedTx.to,
             value: web3.utils.toHex(decodedTx.value)
         };
-
-        console.log('txObject : ', txObject);
+        
+        log.trace('1. decoded txObject : ', txObject);
 
         const tx = new Transaction(txObject, { common:customCommon });
 
+        const privateKeyStr = web3.eth.accounts.wallet[0].privateKey;
+        log.trace('2. private key : ', privateKeyStr);
+
         const privateKey = Buffer.from(
-            web3.eth.accounts.wallet[0].privateKey.substring(2),
+            privateKeyStr.substring(2),
             'hex'
         );
     
@@ -140,7 +126,7 @@ const blockchain = {
     sendSignedTx: async function(web3, raw) {
         const txResult = await web3.eth.sendSignedTransaction(raw);
     
-        return txResult;
+        return txResult.transactionHash;
     },
     getTransactionReceipt: async function(web3, txHash) {
         return await web3.eth.getTransactionReceipt(txHash);

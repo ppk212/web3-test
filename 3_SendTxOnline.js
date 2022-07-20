@@ -1,10 +1,17 @@
 import jetpack from "fs-jetpack";
 import Web3 from "web3";
 import blockchain from "./blockchain.js";
+import Log from "console-log-level";
+
+const log = Log({
+    prefix: function(level) {
+        return `[${level}]`
+    },
+    level: 'trace'
+});
 
 function main() {
     const web3 = new Web3();
-    console.log("Web3 Instance Create Complete");
 
     // 1. Add account for Tx
     blockchain.addAccount(web3);
@@ -13,14 +20,20 @@ function main() {
 
     // 3. Get tx's hash signed in file
     const raw = readFile();
-    console.log('raw : ', raw);
+    log.trace('Read File - raw : ', raw);
 
     // 4. Send signed tx which transfer eth
-    blockchain.sendSignedTx(web3, raw).then(txHash => {
-        console.log(txHash);
+    blockchain.sendSignedTx(web3, raw).then(txHash => {        
+        log.trace('Deploy tx - tx hash : ', txHash);
 
-        // 5. Write tx hash finalized in file
-        writeFile(txHash);
+        // 5. Get receipt of tx deployed
+        blockchain.getTransactionReceipt(web3, txHash).then(txObejct => {
+            log.trace('Receipt of tx deployed : ', txObejct);
+
+            // 6. Write tx receipt finalized in file
+            writeFile(txObejct);
+            log.trace('Write File - tx receipt');
+        });
     });
 }
 

@@ -55,4 +55,5 @@ node 3_SendTxOnline.js
 2. Connect web3 network
 3. Get tx's hash signed in file - File Path : './result/2_serialized_tx.txt'
 4. Send signed tx which transfer eth
-5. Write tx hash finalized in file - File Path : './result/3_send_tx.txt'
+5. Get receipt of tx deployed
+6. Write tx receipt finalized in file - File Path : './result/3_send_tx.txt'
