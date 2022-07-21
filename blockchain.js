@@ -19,8 +19,13 @@ const blockchain = {
     getNonce: async function(web3, account) {
         return await web3.eth.getTransactionCount(account.address);
     },
-    createTxForDeployContract: async function(web3, txCount, bytecode) {
-            
+    createTxForDeployContract: async function(web3, bytecode) {
+        log.trace('bytecode : ', bytecode);
+        const sender = web3.eth.accounts.wallet[0];
+        
+        const txCount = await web3.eth.getTransactionCount(sender.address);
+        log.trace('1. Nonce : ', txCount);
+        
         // Create tx for deploying contract
         const txObject = {
             nonce: web3.utils.toHex(txCount),
@@ -29,8 +34,26 @@ const blockchain = {
             input: bytecode,
             value: '0x00'
         };
+
+        log.trace('2. txObject : ', txObject);
+
+        const networkId = await web3.eth.net.getId();
+        const chainId = await web3.eth.getChainId();
         
-        return txObject;
+        const customCommon = Common.default.forCustomChain(
+            'mainnet',
+            {
+                name: 'my-private-blockchain',
+                networkId: networkId,
+                chainId: chainId,
+            },
+            'istanbul',
+        );
+        
+        const tx = new Transaction(txObject, { common:customCommon });
+        const hash = '0x' + tx.serialize().toString('hex');
+        
+        return hash;
     },
     createTxForTransferEth: async function(web3) {
         const sender = web3.eth.accounts.wallet[0];

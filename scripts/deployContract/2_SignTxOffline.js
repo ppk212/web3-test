@@ -1,6 +1,6 @@
 import jetpack from "fs-jetpack";
 import Web3 from "web3";
-import blockchain from "./blockchain.js";
+import blockchain from "../../blockchain.js";
 import Log from "console-log-level";
 
 const log = Log({
@@ -24,7 +24,7 @@ function main() {
     // 3. Get network info in file (Option)
     const networkInfo = getNetworkInfoInFile();
 
-    // 4. Sign tx which transfer eth
+    // 4. Sign tx which deploy contract
     const hash = blockchain.signTx(web3, txHash, networkInfo)
     log.trace('Final signed tx - hash : ', txHash);
 
@@ -34,21 +34,21 @@ function main() {
 }
 
 function readFile() {
-    const path = './result/1_result.txt';
+    const path = './scripts/deployContract/result/1_result.txt';
     const data = jetpack.read(path);
 
     return data;
 }
 
 function getNetworkInfoInFile() {
-    const path = './result/networkInfo.json';
+    const path = './scripts/deployContract/result/networkInfo.json';
     const data = jetpack.read(path, "json");
 
     return data;
 }
 
 function writeFile(hash) {
-    const path = './result/2_serialized_tx.txt';
+    const path = './scripts/deployContract/result/2_serialized_tx.txt';
     jetpack.write(path, hash);
 }
 

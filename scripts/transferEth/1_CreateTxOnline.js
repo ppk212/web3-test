@@ -1,6 +1,6 @@
 import jetpack from "fs-jetpack";
 import Web3 from "web3";
-import blockchain from "./blockchain.js";
+import blockchain from "../../blockchain.js";
 import Log from "console-log-level";
 
 const log = Log({
@@ -34,12 +34,12 @@ function main() {
 }
 
 function writeNetworkJson(networkInfo) {
-    const path = './result/networkInfo.json';
+    const path = './scripts/transferEth/result/networkInfo.json';
     jetpack.write(path, networkInfo);
 }
 
 function writeFile(txHash) {
-    const path = './result/1_result.txt';
+    const path = './scripts/transferEth/result/1_result.txt';
     jetpack.write(path, txHash);
 }
 

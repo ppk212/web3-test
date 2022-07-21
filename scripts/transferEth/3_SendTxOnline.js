@@ -1,6 +1,6 @@
 import jetpack from "fs-jetpack";
 import Web3 from "web3";
-import blockchain from "./blockchain.js";
+import blockchain from "../../blockchain.js";
 import Log from "console-log-level";
 
 const log = Log({
@@ -38,14 +38,14 @@ function main() {
 }
 
 function readFile() {
-    const path = './result/2_serialized_tx.txt';
+    const path = './scripts/transferEth/result/2_serialized_tx.txt';
 
     const data = jetpack.read(path);
     return data;
 }
 
 function writeFile(hash) {
-    const path = './result/3_send_tx.txt';
+    const path = './scripts/transferEth/result/3_send_tx.txt';
     jetpack.write(path, hash);
 }
 
